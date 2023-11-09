@@ -1,0 +1,33 @@
+name: CI / CD for Angular
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+  build-dev-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up node.js
+        uses: actions/setup-node@v3.3.0
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Tests
+        run: npm run ci:test
+
+      - name: Build
+        run: npm run build
+
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ftp.sintinta.com
+          username: pre.sintinta.com
+          password: ${{ secrets.pre_sintinta_ftp_password }}
