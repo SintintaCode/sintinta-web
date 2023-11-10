@@ -1,7 +1,7 @@
 name: CI / CD for Angular
 on:
   push:
-    branches: [ "develop" ]
+    branches: ["develop"]
 
 jobs:
   build-dev-and-deploy:
@@ -13,8 +13,8 @@ jobs:
       - name: Set up node.js
         uses: actions/setup-node@v3.3.0
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version: "20"
+          cache: "yarn"
 
       - name: Install dependencies
         run: npm install
@@ -28,11 +28,14 @@ jobs:
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
         with:
-            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-            ARGS: "-avz"
-            SOURCE: "dist/fe-ink"
-            REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-            REMOTE_USER: ${{ secrets.REMOTE_USER }}
-            TARGET: ${{ secrets.REMOTE_TARGET }}
-            EXCLUDE: "/dist/fe-ink"
-
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-avz"
+          SOURCE: "dist/fe-ink"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+          EXCLUDE: "/dist/fe-ink"
+      - name: semantic-release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx semantic-release
